@@ -4,6 +4,13 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,25 +32,29 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
-        Optional<User> userOptional = this.uRepository.findByName(loginRequestDto.getEmail());
-        if (userOptional.isEmpty()) {
+    public ResponseEntity<?> login(LoginRequestDto loginRequestDto){
+        try {
+            Authentication authentication = this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDto.getUsername(),
+                            loginRequestDto.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = this.jwtTokenProvider.generateToken(userDetails.getUsername());
+            return ResponseEntity.ok(new AuthResponse(true, "Login successful", jwtToken));
+        } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials",
-                            "Invalid email or password"));
-        }
-        User user = userOptional.get();
-        boolean hashedPassword = this.passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword());
-        if (!hashedPassword) {
+                .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials", 
+                      "Invalid email or password"));
+        } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials",
-                            "Invalid email or password"));
+                .body(new ErrorResponse(false, "UNAUTHORIZED", "account", 
+                      "Account is disabled"));
+        } catch (LockedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(false, "UNAUTHORIZED", "account", 
+                      "Account is locked"));
         }
-        AuthResponse response = new AuthResponse(
-                true,
-                "athenticated successfuly",
-                "123445567890987");
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
