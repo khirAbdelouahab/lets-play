@@ -13,7 +13,7 @@ import com.example.lets_play.service.AuthenticationService;
 @RestController
 @RequestMapping("/auth/")
 public class AuthenticationController {
-    
+
     private final AuthenticationService authenticationService;
 
     public AuthenticationController(AuthenticationService authenticationService) {
@@ -22,21 +22,11 @@ public class AuthenticationController {
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
-        // check if user exists
-
-        // generate token
-
-        // sends token to the client
-        return null;
+        return this.authenticationService.login(loginRequestDto);
     }
 
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
-        // check if user doesn't exists
-
-        // hash password before saveing it to database
-
-        // save user in database
-        return null;
+        return this.authenticationService.register(registerRequestDto);
     }
 }

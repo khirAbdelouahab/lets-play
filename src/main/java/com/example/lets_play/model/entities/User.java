@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.Column;
 
-@Document(collection = "User")
+@Document(collection = "users")
 public class User {
 
     @Id

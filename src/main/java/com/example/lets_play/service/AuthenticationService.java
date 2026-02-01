@@ -3,31 +3,47 @@ package com.example.lets_play.service;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.example.lets_play.model.dto.AuthResponse;
 import com.example.lets_play.model.dto.ErrorResponse;
 import com.example.lets_play.model.dto.LoginRequestDto;
 import com.example.lets_play.model.dto.RegisterRequestDto;
 import com.example.lets_play.model.entities.User;
 import com.example.lets_play.repository.UserRepository;
+import com.example.lets_play.security.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository uRepository;
-
-    public AuthenticationService(UserRepository uRepository) {
-        this.uRepository = uRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
         Optional<User> userOptional = this.uRepository.findByName(loginRequestDto.getEmail());
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials", 
-                  "Invalid email or password"));
+                    .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials",
+                            "Invalid email or password"));
         }
         User user = userOptional.get();
-        return ResponseEntity.ok("123445567890987");
+        boolean hashedPassword = this.passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword());
+        if (!hashedPassword) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials",
+                            "Invalid email or password"));
+        }
+        AuthResponse response = new AuthResponse(
+                true,
+                "athenticated successfuly",
+                "123445567890987");
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
@@ -40,15 +56,22 @@ public class AuthenticationService {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         }
         if (this.uRepository.existsByName(registerRequestDto.getName())) {
-             ErrorResponse errorResponse = new ErrorResponse(
+            ErrorResponse errorResponse = new ErrorResponse(
                     false,
                     "CONFLICT",
                     "name",
                     "UserName already taken");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         }
+        User user = new User();
+        user.setEmail(registerRequestDto.getEmail());
+        user.setName(registerRequestDto.getName());
+        String hashedPassword = this.passwordEncoder.encode(registerRequestDto.getPassword());
+        user.setPassword(hashedPassword);
+        user.setRole("USER");
+        this.uRepository.save(user);
         AuthResponse authResponse = new AuthResponse(
-            true, "successfuly" , null);
-        return ResponseEntity.ok(authResponse);
+                true, "successfuly", null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
 }

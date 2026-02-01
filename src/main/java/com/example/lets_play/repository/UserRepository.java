@@ -10,8 +10,6 @@ import com.example.lets_play.model.entities.User;
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmail(String email);
     Optional<User> findByName(String name);
-
-
     boolean existsByEmail(String email);
     boolean existsByName(String name);
     List<User> findAll();

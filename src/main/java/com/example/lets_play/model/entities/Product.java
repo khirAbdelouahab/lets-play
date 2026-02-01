@@ -4,7 +4,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Product")
+@Document(collection = "products")
 public class Product {
     @Id
     private String id;
