@@ -1,4 +1,7 @@
 package com.example.lets_play.model.dto;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.lets_play.model.entities.User;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +27,12 @@ public class UserDto {
                 .name(entity.getName())
                 .role(entity.getRole())
                 .build();
+    }
+
+    public static List<UserDto> toDto(List<User> entities) {
+        return entities.stream()
+                .map(UserDto::toDto)
+                .toList();
     }
 
 }

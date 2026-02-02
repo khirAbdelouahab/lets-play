@@ -11,7 +11,7 @@ import com.example.lets_play.model.dto.RegisterRequestDto;
 import com.example.lets_play.service.AuthenticationService;
 
 @RestController
-@RequestMapping("/auth/")
+@RequestMapping("/api/v1/auth/")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
