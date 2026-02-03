@@ -23,6 +23,7 @@ public class UserDto {
 
     public static UserDto toDto(User entity) {
         return UserDto.builder()
+                .id(entity.getId())
                 .email(entity.getEmail())
                 .name(entity.getName())
                 .role(entity.getRole())

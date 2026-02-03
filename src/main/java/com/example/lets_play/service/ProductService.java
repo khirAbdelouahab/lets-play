@@ -1,8 +1,12 @@
 package com.example.lets_play.service;
 
+import java.util.List;
+
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import com.example.lets_play.model.dto.ProductRequestDto;
+import com.example.lets_play.model.dto.ProductResponseDto;
 import com.example.lets_play.model.entities.Product;
 import com.example.lets_play.repository.ProductRepository;
 
@@ -24,13 +28,23 @@ public class ProductService {
         return newProduct;
     }
 
-
-
-    public void delete(String id) {
+    public void delete(String ProductId) {
          
     }
 
+    public void update(ProductRequestDto newProduct) {
+         
+    }
 
+    public Product find(String ProductId) {
+        return this.pRepository.findById(ProductId).orElse(null);
+    }
 
-    
+    public List<Product> geProducts() {
+        return this.pRepository.findAll();
+    }
+
+    public List<Product> geProducts(String ownerName) {
+        return this.pRepository.findAllByOwnerName(ownerName);
+    }
 }

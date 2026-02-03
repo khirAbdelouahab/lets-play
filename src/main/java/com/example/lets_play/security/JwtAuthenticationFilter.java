@@ -33,6 +33,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+        System.out.println("=== JWT Filter ===");
+        System.out.println("Path: " + path);
+        System.out.println("Method: " + method);
+        if (path.startsWith("/api/v1/auth")) {
+            System.out.println("Skipping auth endpoint");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (method.equals("GET") && path.startsWith("/api/v1/products")) {
+            System.out.println("Skipping public GET endpoint");
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
