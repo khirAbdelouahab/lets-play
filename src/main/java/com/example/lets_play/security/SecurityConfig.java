@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,15 +27,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/products/ownedBy/**").permitAll()
-                        .requestMatchers("/api/v1/products/**").authenticated()
-                        .anyRequest().authenticated())
-
+                .authorizeHttpRequests(auth -> {
+                    System.out.println("🔧 Configuring security rules...");
+                    auth
+                            .requestMatchers("/api/v1/auth/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                            .requestMatchers("/api/v1/products").permitAll()
+                            .requestMatchers("/error").permitAll()
+                            .anyRequest().authenticated();
+                })
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, ex) -> {
+                            System.out.println("❌ AuthenticationEntryPoint triggered for: " + request.getRequestURI());
+                            System.out.println("❌ Exception: " + ex.getMessage());
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
                             response.getWriter().write("""
@@ -44,6 +49,10 @@ public class SecurityConfig {
                                     """);
                         })
                         .accessDeniedHandler((request, response, ex) -> {
+                            System.out.println("🚫 AccessDenied for: " + request.getRequestURI());
+                            System.out.println("🚫 Exception: " + ex.getMessage());
+                            System.out.println("🚫 User authorities: " +
+                                    SecurityContextHolder.getContext().getAuthentication().getAuthorities());
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType("application/json");
                             response.getWriter().write("""

@@ -12,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.lets_play.exception.EmailAlreadyExistException;
+import com.example.lets_play.exception.UsernameAlreadyExistsException;
 import com.example.lets_play.model.dto.AuthResponse;
 import com.example.lets_play.model.dto.ErrorResponse;
 import com.example.lets_play.model.dto.LoginRequestDto;
@@ -56,20 +59,10 @@ public class AuthenticationService {
 
     public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
         if (this.uRepository.existsByEmail(registerRequestDto.getEmail())) {
-            ErrorResponse errorResponse = new ErrorResponse(
-                    false,
-                    "CONFLICT",
-                    "email",
-                    "Email already exists");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+            throw new EmailAlreadyExistException("Email already Exists");
         }
         if (this.uRepository.existsByName(registerRequestDto.getName())) {
-            ErrorResponse errorResponse = new ErrorResponse(
-                    false,
-                    "CONFLICT",
-                    "name",
-                    "UserName already taken");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+            throw new UsernameAlreadyExistsException("Username already Exists");
         }
         User user = new User();
         user.setEmail(registerRequestDto.getEmail());

@@ -2,11 +2,9 @@ package com.example.lets_play.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,13 +22,13 @@ import com.example.lets_play.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@EnableMethodSecurity
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
     private final ProductService pService;
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> create(@AuthenticationPrincipal UserDetails user,
             @RequestBody ProductRequestDto newProduct) {
         this.pService.create(newProduct, user.getUsername());
@@ -62,14 +60,16 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@productSecurity.isOwner(#productId, authentication)")
+    @PreAuthorize("isAuthenticated() && @productSecurity.isOwner(#productId, authentication)")
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequestDto productRequestDto,
             @PathVariable("id") String productId) {
+
+            
         return null;
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@productSecurity.isOwner(#productId, authentication)")
+    @PreAuthorize("isAuthenticated() && (@productSecurity.isOwner(#productId, authentication) || hasAuthority('ADMIN'))")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") String productId) {
         Product product = this.pService.find(productId);
         Map<String, String> response = new HashMap<>();

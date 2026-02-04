@@ -33,25 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-        String method = request.getMethod();
-        System.out.println("=== JWT Filter ===");
-        System.out.println("Path: " + path);
-        System.out.println("Method: " + method);
-        if (path.startsWith("/api/v1/auth")) {
-            System.out.println("Skipping auth endpoint");
-            filterChain.doFilter(request, response);
-            return;
-        }
+        System.out.println("================================");
+        System.out.println("🌐 Request: " + request.getMethod() + " " + request.getRequestURI());
 
-        if (method.equals("GET") && path.startsWith("/api/v1/products")) {
-            System.out.println("Skipping public GET endpoint");
-            filterChain.doFilter(request, response);
-            return;
-        }
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("❌ No Bearer token found");
             filterChain.doFilter(request, response);
             return;
         }
@@ -69,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
                 if (!jwtTokenProvider.validateToken(token, userDetails)) {
+                    System.out.println("❌ Token validation failed");
                     sendUnauthorized(response, "Invalid JWT token", HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
@@ -80,6 +69,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("✅ User authenticated: " + username);
+                System.out.println("🔑 Authorities: " + userDetails.getAuthorities());
             }
 
             filterChain.doFilter(request, response);
@@ -101,14 +92,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setStatus(status);
         response.setContentType("application/json");
         response.getWriter().write("{\"error\": \"" + message + "\"}");
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
-        return path.equals("/login")
-                || path.equals("/register")
-                || path.startsWith("/auth");
     }
 
 }

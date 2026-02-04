@@ -5,6 +5,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.lets_play.exception.EmailAlreadyExistException;
 import com.example.lets_play.model.entities.User;
 import com.example.lets_play.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User findUserByName(String name) {
-        return this.uRepository.findByName(name).orElse(null);
+        return this.uRepository.findByName(name)
+                        .orElseThrow(() -> new UsernameNotFoundException("username not exists"));
     }
 
     public User findUserByEmail(String email) {
-        return this.uRepository.findByEmail(email).orElse(null);
+        return this.uRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailAlreadyExistException("email already exits"));
     }
 
     public List<User> findAllUsers() {

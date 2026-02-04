@@ -5,6 +5,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
+import com.example.lets_play.exception.ProductNotFoundException;
 import com.example.lets_play.model.dto.ProductRequestDto;
 import com.example.lets_play.model.dto.ProductResponseDto;
 import com.example.lets_play.model.entities.Product;
@@ -37,7 +38,8 @@ public class ProductService {
     }
 
     public Product find(String ProductId) {
-        return this.pRepository.findById(ProductId).orElse(null);
+        return this.pRepository.findById(ProductId)
+                    .orElseThrow(() -> new ProductNotFoundException(ProductId));
     }
 
     public List<Product> geProducts() {

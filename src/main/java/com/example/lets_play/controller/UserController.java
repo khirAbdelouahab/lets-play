@@ -33,9 +33,9 @@ public class UserController {
         return ResponseEntity.ok(UserDto.toDto(this.uService.findAllUsers()));
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody User user) {
-        User createdUser = this.uService.save(user);
-        return ResponseEntity.ok(UserDto.toDto(createdUser));
-    }
+    // @PostMapping
+    // public ResponseEntity<UserDto> create(@RequestBody User user) {
+    //     User createdUser = this.uService.save(user);
+    //     return ResponseEntity.ok(UserDto.toDto(createdUser));
+    // }
 }
