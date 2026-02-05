@@ -22,7 +22,7 @@ Let's Play is a production-ready RESTful API developed using Spring Boot and Mon
 - **[Spring Boot](https://spring.io/projects/spring-boot)** `3.x` - Application framework
 - **[Spring Security](https://spring.io/projects/spring-security)** - Authentication and authorization
 - **[Spring Data MongoDB](https://spring.io/projects/spring-data-mongodb)** - Database integration
-- **[Java](https://www.oracle.com/java/)** `17+` - Programming language
+- **[Java](https://www.oracle.com/java/)** `24` - Programming language
 
 ### Security
 - **[JWT (JSON Web Tokens)](https://jwt.io/)** - Token-based authentication
@@ -33,7 +33,7 @@ Let's Play is a production-ready RESTful API developed using Spring Boot and Mon
 - **[MongoDB](https://www.mongodb.com/)** `6.x` - NoSQL database
 
 ### Build Tools
-- **[Maven](https://maven.apache.org/)** `3.8+` - Dependency management and build automation
+- **[Maven](https://maven.apache.org/)** `3.9+` - Dependency management and build automation
 
 ### DevOps (Optional)
 - **[Docker](https://www.docker.com/)** - Containerization
