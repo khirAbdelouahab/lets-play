@@ -459,7 +459,7 @@ All error responses follow this format:
 **Common Status Codes:**
 - `200` - Success
 - `201` - Created
-- `204` - No Content (successful deletion)
+- `409` - Conflict (Email OR Username Already Exists)
 - `400` - Bad Request (validation error)
 - `401` - Unauthorized (authentication required)
 - `403` - Forbidden (insufficient permissions)
