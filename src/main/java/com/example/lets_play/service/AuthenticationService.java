@@ -1,5 +1,6 @@
 package com.example.lets_play.service;
 
+import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.lets_play.exception.EmailAlreadyExistException;
 import com.example.lets_play.exception.UsernameAlreadyExistsException;
 import com.example.lets_play.model.dto.AuthResponse;
-import com.example.lets_play.model.dto.ErrorResponse;
+import com.example.lets_play.model.dto.HttpErrorResponse;
 import com.example.lets_play.model.dto.LoginRequestDto;
 import com.example.lets_play.model.dto.RegisterRequestDto;
 import com.example.lets_play.model.entities.User;
@@ -32,7 +32,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public ResponseEntity<?> login(LoginRequestDto loginRequestDto){
+    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
         try {
             Authentication authentication = this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -43,17 +43,32 @@ public class AuthenticationService {
             String jwtToken = this.jwtTokenProvider.generateToken(userDetails.getUsername());
             return ResponseEntity.ok(new AuthResponse(true, "Login successful", jwtToken));
         } catch (BadCredentialsException e) {
+            HttpErrorResponse error = HttpErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .error("UNAUTHORIZED")
+                    .message("Invalid email or password")
+                    .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(false, "UNAUTHORIZED", "credentials", 
-                      "Invalid email or password"));
+                    .body(error);
         } catch (DisabledException e) {
+            HttpErrorResponse error = HttpErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .error("UNAUTHORIZED")
+                    .message("Account is disabled")
+                    .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(false, "UNAUTHORIZED", "account", 
-                      "Account is disabled"));
+                    .body(error);
         } catch (LockedException e) {
+            HttpErrorResponse error = HttpErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .error("UNAUTHORIZED")
+                    .message("Account is locked")
+                    .build();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(false, "UNAUTHORIZED", "account", 
-                      "Account is locked"));
+                    .body(error);
         }
     }
 

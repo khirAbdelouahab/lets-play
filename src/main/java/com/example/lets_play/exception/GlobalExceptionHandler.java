@@ -97,19 +97,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpErrorResponse> handleGenericException(
-            Exception ex, WebRequest request) {
+//     @ExceptionHandler(Exception.class)
+//     public ResponseEntity<HttpErrorResponse> handleGenericException(
+//             Exception ex, WebRequest request) {
         
-        System.out.println(String.format("Unexpected error occurred: %s", ex));
-        HttpErrorResponse error = HttpErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
-                .message("An unexpected error occurred. Please try again later.")
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+//         System.out.println(String.format("Unexpected error occurred: %s", ex));
+//         HttpErrorResponse error = HttpErrorResponse.builder()
+//                 .timestamp(LocalDateTime.now())
+//                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                 .error("Internal Server Error")
+//                 .message("An unexpected error occurred. Please try again later.")
+//                 .path(request.getDescription(false).replace("uri=", ""))
+//                 .build();
         
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+//     }
 }

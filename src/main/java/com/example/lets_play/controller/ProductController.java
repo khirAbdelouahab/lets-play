@@ -63,24 +63,13 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() && @productSecurity.isOwner(#productId, authentication)")
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequestDto productRequestDto,
             @PathVariable("id") String productId) {
-
             
-        return null;
+        return this.pService.update(productId, productRequestDto);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated() && (@productSecurity.isOwner(#productId, authentication) || hasAuthority('ADMIN'))")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") String productId) {
-        Product product = this.pService.find(productId);
-        Map<String, String> response = new HashMap<>();
-        if (product == null) {
-            response.put("success", "false");
-            response.put("error", "product not found");
-            return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(response);
-        }
-        this.pService.delete(productId);
-        response.put("success", "true");
-        response.put("message", "product deleted successfuly");
-        return ResponseEntity.ok(response);
+        return this.pService.delete(productId);
     }
 }
