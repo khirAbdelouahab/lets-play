@@ -430,13 +430,13 @@ Authorization: Bearer {admin-token}
     "id": "698121b28f95f865df6e2af2",
     "name": "john",
     "email": "john@example.com",
-    "role": "ROLE_USER"
+    "role": "USER"
   },
   {
     "id": "698121b28f95f865df6e2af3",
     "name": "admin",
     "email": "admin@example.com",
-    "role": "ROLE_ADMIN"
+    "role": "ADMIN"
   }
 ]
 ```
