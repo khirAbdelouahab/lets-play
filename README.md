@@ -46,7 +46,7 @@ Let's Play is a production-ready RESTful API developed using Spring Boot and Mon
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/lets-play.git
+git clone https://github.com/khirAbdelouahab/lets-play.git
 cd lets-play
 ```
 
@@ -130,8 +130,7 @@ server.port=8080
 
 # MongoDB Configuration
 
-look at src/main/java/com/example/lets-play/config/MongoConfig.java
-
+Look at src/main/java/com/example/lets-play/config/MongoConfig.java
 
 
 ---
