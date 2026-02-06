@@ -13,7 +13,7 @@ public class MongoConfig {
     @Bean
     public MongoTemplate mongoTemplate() {
         return new MongoTemplate(
-            MongoClients.create("mongodb://localhost:27018"), 
+            MongoClients.create("mongodb+srv://abouchik:BERoujkanDA@4948-mongodb@letsplaydb.472e7rx.mongodb.net/?appName=letsplaydb"), 
             "letsplaydb"
         );
     }
