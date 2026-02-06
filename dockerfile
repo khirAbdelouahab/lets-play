@@ -10,6 +10,7 @@ FROM eclipse-temurin:24-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
+
 # Render uses PORT environment variable
 ENV PORT=8080
 EXPOSE ${PORT}
