@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.lets_play.model.dto.ProductRequestDto;
 import com.example.lets_play.model.dto.ProductResponseDto;
+import com.example.lets_play.model.dto.ProductUpdateDto;
 import com.example.lets_play.model.entities.Product;
 import com.example.lets_play.service.ProductService;
+
+import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> create(@AuthenticationPrincipal UserDetails user,
-            @RequestBody ProductRequestDto newProduct) {
+            @Valid @RequestBody ProductRequestDto newProduct) {
         this.pService.create(newProduct, user.getUsername());
         return ResponseEntity.ok(ProductResponseDto.builder()
                 .success(true)
@@ -40,11 +44,13 @@ public class ProductController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<?> getProducts() {
         return ResponseEntity.ok(this.pService.geProducts());
     }
 
     @GetMapping("/ownedBy/{username}")
+    @PermitAll
     public ResponseEntity<?> getProducts(@PathVariable("username") String username) {
         return ResponseEntity.ok(this.pService.geProducts(username));
     }
@@ -61,7 +67,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated() && @productSecurity.isOwner(#productId, authentication)")
-    public ResponseEntity<?> updateProduct(@RequestBody ProductRequestDto productRequestDto,
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductUpdateDto productRequestDto,
             @PathVariable("id") String productId) {
             
         return this.pService.update(productId, productRequestDto);

@@ -73,6 +73,8 @@ public class AuthenticationService {
     }
 
     public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
+
+        System.out.println("email = " + registerRequestDto.getEmail());
         if (this.uRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new EmailAlreadyExistException("Email already Exists");
         }

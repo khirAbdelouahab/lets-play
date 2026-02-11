@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.lets_play.exception.ProductNotFoundException;
 import com.example.lets_play.model.dto.ProductRequestDto;
 import com.example.lets_play.model.dto.ProductResponseDto;
+import com.example.lets_play.model.dto.ProductUpdateDto;
 import com.example.lets_play.model.entities.Product;
 import com.example.lets_play.repository.ProductRepository;
 
@@ -42,7 +43,7 @@ public class ProductService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<?> update(String productId, ProductRequestDto newProduct) {
+    public ResponseEntity<?> update(String productId, ProductUpdateDto newProduct) {
         Product product = this.find(productId);
         if (newProduct.getName() != null) {
             product.setName(newProduct.getName());

@@ -10,6 +10,8 @@ import com.example.lets_play.model.dto.LoginRequestDto;
 import com.example.lets_play.model.dto.RegisterRequestDto;
 import com.example.lets_play.service.AuthenticationService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/auth/")
 public class AuthenticationController {
@@ -26,7 +28,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
+        
         return this.authenticationService.register(registerRequestDto);
     }
 }

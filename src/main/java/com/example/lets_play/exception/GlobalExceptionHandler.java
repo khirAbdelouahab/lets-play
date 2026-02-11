@@ -1,9 +1,12 @@
 package com.example.lets_play.exception;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -97,19 +100,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
-//     @ExceptionHandler(Exception.class)
-//     public ResponseEntity<HttpErrorResponse> handleGenericException(
-//             Exception ex, WebRequest request) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<HttpErrorResponse> handleValidationExceptions(
+            MethodArgumentNotValidException ex, WebRequest request) {
+        String message = ex.getBindingResult().getAllErrors().stream()
+            .map(error -> error.getDefaultMessage())
+            .findFirst()
+            .orElse("Validation failed");
+        HttpErrorResponse error = HttpErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message(message)
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
         
-//         System.out.println(String.format("Unexpected error occurred: %s", ex));
-//         HttpErrorResponse error = HttpErrorResponse.builder()
-//                 .timestamp(LocalDateTime.now())
-//                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-//                 .error("Internal Server Error")
-//                 .message("An unexpected error occurred. Please try again later.")
-//                 .path(request.getDescription(false).replace("uri=", ""))
-//                 .build();
-        
-//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-//     }
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }

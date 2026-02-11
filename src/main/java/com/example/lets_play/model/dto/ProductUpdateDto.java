@@ -1,9 +1,5 @@
 package com.example.lets_play.model.dto;
 
-import com.example.lets_play.model.entities.Product;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -17,24 +13,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequestDto {
+public class ProductUpdateDto {
     private String id;
-    @NotBlank(message = "name is required")
     @Size(min = 6, max = 20, message = "name should be at least 6 charachters and 20 at most")
     private String name;
-    @NotBlank(message = "description is required")
     @Size(min = 10, max = 200, message = "description should be at least 6 charachters and 20 at most")
     private String description;
-    @NotNull(message = "Price is required")
     @Positive(message = "Price must be greater than 0")
     private Double price;
-
-    public static ProductRequestDto toDto(Product product) {
-        return ProductRequestDto.builder()
-                    .id(product.getId())
-                    .name(product.getName())
-                    .description(product.getDescription())
-                    .price(product.getPrice())
-                    .build();
-    }
 }
